@@ -13,10 +13,15 @@ import (
 	"github.com/Bloodstein/pyraxel/factory"
 )
 
-type Response struct {
-	Status   string `json:"status"`
+type FileResponse struct {
 	FileName string `json:"fileName"`
 	Content  string `json:"buffer"`
+}
+
+type Response struct {
+	Status  string       `json:"status"`
+	Message string       `json:"message"`
+	File    FileResponse `json:"file"`
 }
 
 func NewHandler() func() {
@@ -48,18 +53,21 @@ func executeGeneration(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	res := Response{
-		Status:   "ok",
-		FileName: fileName,
-		Content:  base64.StdEncoding.EncodeToString(fileContent),
+		Status:  "ok",
+		Message: "Generation was end. An Excel file was create successfully!",
+		File: FileResponse{
+			FileName: fileName,
+			Content:  base64.StdEncoding.EncodeToString(fileContent),
+		},
 	}
 
-	bRes, err := json.Marshal(res)
+	responseBytes, err := json.Marshal(res)
 
 	if err != nil {
 		log.Fatalf("Error was occured while marshaling response structure: %s", err.Error())
 	}
 
-	response := fmt.Sprintf("{\"status\": \"ok\", \"message\": \"Generation was end. An Excel file was create successfully!\", \"response\": %s}", string(bRes))
+	response := string(responseBytes)
 
 	writer.WriteHeader(200)
 	io.WriteString(writer, response)
