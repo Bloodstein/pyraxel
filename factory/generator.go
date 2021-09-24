@@ -20,14 +20,15 @@ func (this *ExcelFactory) guid() string {
 }
 
 func (this *ExcelFactory) getColumns() []string {
-	alpha := strings.Split("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "")
-	for _, a := range alpha {
-		for _, b := range alpha {
-			alpha = append(alpha, strings.Join([]string{a, b}, ""))
+	alpha := "A_B_C_D_E_F_G_H_I_J_K_L_M_N_O_P_Q_R_S_T_U_V_W_X_Y_Z"
+	letters := strings.Split(alpha, "_")
+	for _, a := range letters {
+		for _, b := range letters {
+			alpha = strings.Join([]string{alpha, strings.Join([]string{a, b}, "")}, "_")
 		}
 	}
 
-	return alpha
+	return strings.Split(alpha, "_")
 }
 
 func (this *ExcelFactory) generate(data []string) string {
