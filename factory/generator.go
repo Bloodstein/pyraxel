@@ -75,8 +75,11 @@ func (this *ExcelFactory) hardGeneration(request models.ExcelRequest) string {
 	boldStyleId, _ := f.NewStyle(`{"font":{"bold":true}}`)
 
 	log.Println("Start create a report's header")
+
+	f.SetCellValue("Sheet1", strings.Join([]string{"A", fmt.Sprint(request.Params.Header.StartRow)}, ""), "#")
+
 	for key, title := range request.Params.Header.Columns {
-		cell := strings.Join([]string{columns[key], fmt.Sprint(request.Params.Header.StartRow)}, "")
+		cell := strings.Join([]string{columns[key+1], fmt.Sprint(request.Params.Header.StartRow)}, "")
 		f.SetCellValue("Sheet1", cell, title)
 
 		if request.Params.Header.Bold == true {
@@ -88,7 +91,7 @@ func (this *ExcelFactory) hardGeneration(request models.ExcelRequest) string {
 
 	if request.Params.Header.Filter == true {
 		log.Println("The filter is need for report. Let's create it.")
-		f.AutoFilter("Sheet1", "A1", strings.Join([]string{columns[maxColumnNumber], fmt.Sprint(request.Params.Header.StartRow)}, ""), "")
+		f.AutoFilter("Sheet1", strings.Join([]string{"A", fmt.Sprint(request.Params.Header.StartRow)}, ""), strings.Join([]string{columns[maxColumnNumber], fmt.Sprint(request.Params.Header.StartRow)}, ""), "")
 	}
 
 	dataStartRow := request.Params.Header.StartRow + 1
