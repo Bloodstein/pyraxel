@@ -8,9 +8,9 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"strings"
 
 	"github.com/Bloodstein/pyraxel/factory"
+	"github.com/Bloodstein/pyraxel/models"
 )
 
 type FileResponse struct {
@@ -41,8 +41,16 @@ func handleRequest() {
 func executeGeneration(writer http.ResponseWriter, request *http.Request) {
 	log.Println("Starting generation...")
 
+	decoder := json.NewDecoder(request.Body)
+
+	var requestParams models.ExcelRequest
+
+	if err := decoder.Decode(&requestParams); err != nil {
+		log.Fatalf("Error was occured while unmarchal request body: %s", err.Error())
+	}
+
 	method := factory.NewFactory()
-	fileName := method(strings.Split(request.URL.Query().Get("values"), ","))
+	fileName := method(requestParams)
 
 	log.Println("Generation is end!")
 
