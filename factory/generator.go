@@ -3,6 +3,7 @@ package factory
 import (
 	"fmt"
 	"log"
+	"os"
 	"strings"
 
 	"github.com/360EntSecGroup-Skylar/excelize"
@@ -51,6 +52,10 @@ func (this *ExcelFactory) generate(data []string) string {
 func (this *ExcelFactory) hardGeneration(request models.ExcelRequest) string {
 
 	f := excelize.NewFile()
+
+	if _, err := os.Stat("/result"); os.IsNotExist(err) {
+		os.Mkdir("./result", os.ModePerm)
+	}
 
 	var fileName string = fmt.Sprintf("./result/%s.xlsx", this.guid())
 
