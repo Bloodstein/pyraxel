@@ -68,11 +68,9 @@ func (this *ExcelFactory) hardGeneration(request models.ExcelRequest) string {
 	log.Printf("Columns is got. Count: %s\r\n", fmt.Sprint(len(columns)))
 
 	boldStyleId, _ := f.NewStyle(`{"font":{"bold":true}}`)
-	var maxColumnNumber int
 
 	log.Println("Start create a report's header")
 	for key, title := range request.Params.Header.Columns {
-		maxColumnNumber = key
 		cell := strings.Join([]string{columns[key], fmt.Sprint(request.Params.Header.StartRow)}, "")
 		f.SetCellValue("Sheet1", cell, title)
 
@@ -80,6 +78,8 @@ func (this *ExcelFactory) hardGeneration(request models.ExcelRequest) string {
 			f.SetCellStyle("Sheet1", cell, cell, boldStyleId)
 		}
 	}
+
+	maxColumnNumber := len(request.Params.Header.Columns)
 
 	if request.Params.Header.Filter == true {
 		log.Println("The filter is need for report. Let's create it.")
