@@ -91,7 +91,9 @@ func (this *ExcelFactory) hardGeneration(request models.ExcelRequest) string {
 
 	if request.Params.Header.Filter == true {
 		log.Println("The filter is need for report. Let's create it.")
-		f.AutoFilter("Sheet1", strings.Join([]string{"A", fmt.Sprint(request.Params.Header.StartRow)}, ""), strings.Join([]string{columns[maxColumnNumber], fmt.Sprint(request.Params.Header.StartRow)}, ""), "")
+		startCell := strings.Join([]string{"A", fmt.Sprint(request.Params.Header.StartRow)}, "")
+		endCell := strings.Join([]string{columns[maxColumnNumber], fmt.Sprint(request.Params.Header.StartRow)}, "")
+		f.AutoFilter("Sheet1", startCell, endCell, "")
 	}
 
 	dataStartRow := request.Params.Header.StartRow + 1

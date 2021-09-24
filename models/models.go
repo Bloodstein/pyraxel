@@ -6,7 +6,7 @@ type HeaderParams struct {
 	StartRow int      `json:"startRow"`
 	Columns  []string `json:"columns"`
 	Bold     bool     `json:"bold"`
-	Filter   bool     `json:"filters"`
+	Filter   bool     `json:"filter"`
 }
 
 type ExcelParams struct {
