@@ -52,7 +52,7 @@ func (this *ExcelFactory) hardGeneration(request models.ExcelRequest) string {
 
 	f := excelize.NewFile()
 
-	var fileName string = fmt.Sprintf("%s.xlsx", this.guid())
+	var fileName string = fmt.Sprintf("./result/%s.xlsx", this.guid())
 
 	log.Printf("Name of file: %s\r\n", fileName)
 
