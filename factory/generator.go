@@ -53,7 +53,10 @@ func (this *ExcelFactory) hardGeneration(request models.ExcelRequest) string {
 
 	var fileName string = fmt.Sprintf("%s.xlsx", this.guid())
 
+	log.Printf("Name of file: %s\r\n", fileName)
+
 	if len(request.Data.Simple) > 0 {
+		log.Println("Get a simple data. Start fill it.")
 		for _, cell := range request.Data.Simple {
 			f.SetCellValue("Sheet1", cell.Address, cell.Value)
 		}
@@ -61,9 +64,12 @@ func (this *ExcelFactory) hardGeneration(request models.ExcelRequest) string {
 
 	columns := this.getColumns()
 
+	log.Printf("Columns is got. Count: %s\r\n", fmt.Sprint(len(columns)))
+
 	boldStyleId, _ := f.NewStyle(`{"font":{"bold":true}}`)
 	var maxColumnNumber int
 
+	log.Println("Start create a report's header")
 	for key, title := range request.Params.Header.Columns {
 		maxColumnNumber = key
 		cell := strings.Join([]string{columns[key], fmt.Sprint(request.Params.Header.StartRow)}, "")
@@ -75,10 +81,14 @@ func (this *ExcelFactory) hardGeneration(request models.ExcelRequest) string {
 	}
 
 	if request.Params.Header.Filter == true {
+		log.Println("The filter is need for report. Let's create it.")
 		f.AutoFilter("Sheet1", "A1", strings.Join([]string{columns[maxColumnNumber], fmt.Sprint(request.Params.Header.StartRow)}, ""), "")
 	}
 
 	dataStartRow := request.Params.Header.StartRow + 1
+	log.Printf("Start row: %s\r\n", fmt.Sprint(dataStartRow))
+
+	log.Printf("Start to fill report to table data. Count: %s", fmt.Sprint(len(request.Data.Table)))
 
 	for index, row := range request.Data.Table {
 		f.SetCellValue("Sheet1", strings.Join([]string{"A", fmt.Sprint(dataStartRow)}, ""), index+1)
@@ -87,6 +97,8 @@ func (this *ExcelFactory) hardGeneration(request models.ExcelRequest) string {
 		}
 		dataStartRow++
 	}
+
+	log.Println("Filling a report table data was end")
 
 	// {
 	// 	"params": {
