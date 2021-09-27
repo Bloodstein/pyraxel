@@ -11,8 +11,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type ExcelFactory struct {
-}
+type ExcelFactory struct{}
 
 func (this *ExcelFactory) guid() string {
 	uuidWithHyphen := uuid.New()
@@ -32,24 +31,7 @@ func (this *ExcelFactory) getColumns() []string {
 	return strings.Split(alpha, "_")
 }
 
-func (this *ExcelFactory) generate(data []string) string {
-
-	f := excelize.NewFile()
-
-	for key, value := range data {
-		f.SetCellValue("Sheet1", "A"+fmt.Sprint(key+1), value)
-	}
-
-	var fileName string = fmt.Sprintf("%s.xlsx", this.guid())
-
-	if err := f.SaveAs(fileName); err != nil {
-		log.Fatalf("Error was occured while saving an Excel file: %s", err.Error())
-	}
-
-	return fileName
-}
-
-func (this *ExcelFactory) hardGeneration(request models.ExcelRequest) string {
+func (this *ExcelFactory) generate(request models.ExcelRequest) string {
 
 	f := excelize.NewFile()
 
@@ -57,7 +39,7 @@ func (this *ExcelFactory) hardGeneration(request models.ExcelRequest) string {
 		os.Mkdir("./result", os.ModePerm)
 	}
 
-	var fileName string = fmt.Sprintf("./result/%s.xlsx", this.guid())
+	var fileName string = fmt.Sprintf("%s.xlsx", this.guid())
 
 	log.Printf("Name of file: %s\r\n", fileName)
 
@@ -111,29 +93,7 @@ func (this *ExcelFactory) hardGeneration(request models.ExcelRequest) string {
 
 	log.Println("Filling a report table data was end")
 
-	// {
-	// 	"params": {
-	// 		"header": {
-	//			"rownum": 2
-	// 			"columns": ["DebtID", "ЛС"],
-	// 			"bold": true,
-	// 			"filter": true
-	// 		},
-	// 	}
-	// 	"data": {
-	// 		"simple": [
-	// 			{
-	// 				"address": "A1",
-	// 				"value": "Some report"
-	// 			}
-	// 		],
-	// 		"table": [
-	// 			["123", "2800222"]
-	// 		]
-	// 	}
-	// }
-
-	if err := f.SaveAs(fileName); err != nil {
+	if err := f.SaveAs(fmt.Sprintf("./result/%s", fileName)); err != nil {
 		log.Fatalf("Error was occured while saving an Excel file: %s", err.Error())
 	}
 
@@ -142,5 +102,5 @@ func (this *ExcelFactory) hardGeneration(request models.ExcelRequest) string {
 
 func NewFactory() func(models.ExcelRequest) string {
 	f := ExcelFactory{}
-	return f.hardGeneration
+	return f.generate
 }

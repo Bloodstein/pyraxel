@@ -29,3 +29,14 @@ type ExcelRequest struct {
 	Params ExcelParams `json:"params"`
 	Data   ExcelData   `json:"data"`
 }
+
+type FileResponse struct {
+	FileName string `json:"fileName"`
+	Content  string `json:"buffer"`
+}
+
+type Response struct {
+	Status  string       `json:"status"`
+	Message string       `json:"message"`
+	File    FileResponse `json:"file"`
+}

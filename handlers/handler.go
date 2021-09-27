@@ -13,17 +13,6 @@ import (
 	"github.com/Bloodstein/pyraxel/models"
 )
 
-type FileResponse struct {
-	FileName string `json:"fileName"`
-	Content  string `json:"buffer"`
-}
-
-type Response struct {
-	Status  string       `json:"status"`
-	Message string       `json:"message"`
-	File    FileResponse `json:"file"`
-}
-
 func NewHandler() func() {
 	return handleRequest
 }
@@ -31,11 +20,10 @@ func NewHandler() func() {
 func handleRequest() {
 	http.HandleFunc("/generate-simple-excel", executeGeneration)
 
+	fmt.Println("Server has been start on localhost:8080. Try it!")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatalf("Error was occured while serving HTTP: %s", err.Error())
 	}
-
-	fmt.Println("Server has been start on localhost:8080. Try it!")
 }
 
 func executeGeneration(writer http.ResponseWriter, request *http.Request) {
@@ -60,10 +48,10 @@ func executeGeneration(writer http.ResponseWriter, request *http.Request) {
 		log.Fatalf("Error was occured while open file: %s", err.Error())
 	}
 
-	res := Response{
+	res := models.Response{
 		Status:  "ok",
 		Message: "Generation was end. An Excel file was create successfully!",
-		File: FileResponse{
+		File: models.FileResponse{
 			FileName: fileName,
 			Content:  base64.StdEncoding.EncodeToString(fileContent),
 		},
