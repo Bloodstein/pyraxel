@@ -44,17 +44,21 @@ func executeGeneration(writer http.ResponseWriter, request *http.Request) {
 
 	fileContent, err := ioutil.ReadFile(fileName)
 
-	if err != nil {
-		log.Fatalf("Error was occured while open file: %s", err.Error())
-	}
+	res := models.Response{}
 
-	res := models.Response{
-		Status:  "ok",
-		Message: "Generation was end. An Excel file was create successfully!",
-		File: models.FileResponse{
+	if err != nil {
+		log.Printf("Error was occured while open file: %s", err.Error())
+		writer.WriteHeader(500)
+		res.Status = "error"
+		res.Message = err.Error()
+	} else {
+		writer.WriteHeader(200)
+		res.Status = "ok"
+		res.Message = "Generation was end. An Excel file was create successfully!"
+		res.File = models.FileResponse{
 			FileName: fileName,
 			Content:  base64.StdEncoding.EncodeToString(fileContent),
-		},
+		}
 	}
 
 	responseBytes, err := json.Marshal(res)
@@ -65,6 +69,5 @@ func executeGeneration(writer http.ResponseWriter, request *http.Request) {
 
 	response := string(responseBytes)
 
-	writer.WriteHeader(200)
 	io.WriteString(writer, response)
 }
